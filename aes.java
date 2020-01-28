@@ -5,6 +5,42 @@ import javax.crypto.spec.SecretKeySpec;
 
 class aes
 {
+	public static byte [] makeByteKey(String key)	{
+		byte[] bKey = new byte[key.length() / 2];
+			for (int i = 0; i < bKey.length; i++) {
+				int index = i * 2;
+				int v = Integer.parseInt(key.substring(index, index + 2), 16);
+				bKey[i] = (byte) v;
+			}
+			return bKey;
+	}
+
+	public static String convertBlocks(byte  [] bKey, String blocks)	{
+		String encrypt = "";
+		SecretKeySpec secKey = new SecretKeySpec(bKey, "AES");
+		int numberofBlocks = blocks.length() / 32;
+		for(int j = 0; j < numberofBlocks; j++)	{
+			String hexBlocks = blocks.substring(j*32, j*32+32);
+			byte[] bBlock = new byte[16];
+					for (int i = 0; i < bBlock.length; i++) {
+						int index = i * 2;
+						int v = Integer.parseInt(hexBlocks.substring(index, index + 2), 16);
+						bBlock[i] = (byte) v;
+					}
+					try	{
+						Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
+						cipher.init(Cipher.ENCRYPT_MODE, secKey);
+						byte [] finalBytes = cipher.doFinal(bBlock);
+						String blockString = new String(finalBytes, "ISO-8859-15");
+						encrypt += blockString;
+					} catch(Exception e)	{
+						System.out.println(e);
+					}
+		}
+
+		return encrypt;
+
+	}
 
 	public static void main(String args[])
 	{
@@ -32,42 +68,11 @@ class aes
 				counter += 1;
 			}
 
+			byte [] bKey = makeByteKey(key);
+			String finalStr = convertBlocks(bKey, blocks);
 
-			byte[] bKey = new byte[key.length() / 2];
-				for (int i = 0; i < bKey.length; i++) {
-					int index = i * 2;
-					int v = Integer.parseInt(key.substring(index, index + 2), 16);
-					bKey[i] = (byte) v;
-				}
-
-			byte[] bBlock = new byte[blocks.length() / 2];
-					for (int i = 0; i < bBlock.length; i++) {
-						int index = i * 2;
-						int v = Integer.parseInt(blocks.substring(index, index + 2), 16);
-						bBlock[i] = (byte) v;
-					}
-
-			/*String stringKey = hexKeyToString(key.toUpperCase());
-			byte [] bKey = testKey.getBytes();
-			String stringBlock = hexBlockToString(blocks.toUpperCase());
-			byte [] bBlock = testBlock.getBytes();*/
-
-			SecretKeySpec secKey = new SecretKeySpec(bKey, "AES");
-			Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-			cipher.init(Cipher.ENCRYPT_MODE, secKey);
-			byte [] finalBytes = cipher.doFinal(bBlock);
-			String finalStr = new String(finalBytes);
 			System.out.print(finalStr);
 
-			/*for(char cc: finalStr.toCharArray())	{
-				System.out.println(cc);
-			}*/
-			/*String stmp = "";
-			System.out.println(str);
-			for (byte b : finalBytes) {
-            stmp += String.format("%02X", b);
-      }
-			System.out.print(stmp);*/
 
 		}
 		catch(Exception e) {
