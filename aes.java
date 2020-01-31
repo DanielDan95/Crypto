@@ -31,7 +31,7 @@ class aes
 						Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
 						cipher.init(Cipher.ENCRYPT_MODE, secKey);
 						byte [] finalBytes = cipher.doFinal(bBlock);
-						String blockString = new String(finalBytes, "ISO-8859-15");
+						String blockString = new String(finalBytes);
 						encrypt += blockString;
 					} catch(Exception e)	{
 						System.out.println(e);
