@@ -17,7 +17,7 @@ class aes2  {
       Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
       cipher.init(Cipher.ENCRYPT_MODE, secKey);
       byte [] finalBytes = cipher.doFinal(blocks);
-      done = new String(finalBytes, "ISO-8859-15");
+      done = new String(finalBytes, "ISO-8859-16");
     } catch (Exception e) {
       System.out.println(e);
     }
@@ -29,7 +29,6 @@ class aes2  {
     byte [] key = new byte [16];
     List<Byte> rest = new ArrayList<Byte>();
 		try {
-
       //Key fixed length
       for(int i = 0; i < 16; i++) {
         key[i] = (byte) System.in.read();
