@@ -81,8 +81,39 @@ def singleCharXOR():
             continue
     print(bestString)
 
+#5
+def repeating_keyXOR():
+    plaintext = b'Burning \'em, if you ain\'t quick and nimble \nI go crazy when I hear a cymbal'
+    key = b'ICE'
+    string = ""
+    for x in range(0, len(plaintext)):
+        hexa = (hex(key[x%3] ^ plaintext[x]))[2:]
+        hexa = str(hexa)
+        if len(hexa) < 2:
+            hexa = '0' + hexa
+        string += hexa
+    print(string)
+#
+def repeating_keyXOR_newLine():
+    plaintext = """Burning 'em, if you ain't quick and nimble
+I go crazy when I hear a cymbal"""
+    key = b'ICE'
+    byteText = plaintext.encode()
+    counter = 0
+    string = ""
+    for b in byteText:
+        xor = b ^ key[counter%3]
+        hexa = str(hex(xor))[2:]
+        if len(hexa) < 2:
+            hexa = '0' + hexa
+        string += hexa
+        counter += 1
+    print(string)
+
 if __name__ == '__main__':
     #hexToBase()
     #fixedXOR("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965")
     #findXOR("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
-    singleCharXOR()
+    #singleCharXOR()
+    #repeating_keyXOR()
+    repeating_keyXOR_newLine()
