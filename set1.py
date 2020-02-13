@@ -64,16 +64,17 @@ def findXOR(string1):
             highestProbSentence = orgtheString
             theChar = str(c)
     #print("The char %s made: %s"% (theChar, highestProbSentence))
-    return highestProbSentence, bestScore
+    return highestProbSentence, bestScore, theChar
 
 #4
 def singleCharXOR():
     bestScore = 0
     bestString = ""
+    char = ""
     file = open("strings.txt", "r").read().splitlines()
     for line in file:
         try:
-            tmpString, tmpScore = findXOR(line)
+            tmpString, tmpScore, char = findXOR(line)
             if tmpScore > bestScore:
                 bestScore = tmpScore
                 bestString = tmpString
@@ -110,10 +111,73 @@ I go crazy when I hear a cymbal"""
         counter += 1
     print(string)
 
+#6
+def hamming_distance(String1, String2):
+    sum = 0
+    for x in range(0, len(String1)):
+        int_1 = ord(String1[x])
+        int_2 = ord(String2[x])
+        for i in range(31, -1, -1):
+            b1 = int_1 >> i&1
+            b2 = int_2 >> i&1
+            sum += not(b1==b2)
+    #print(sum)
+    return sum
+
+def singleCharXOR1(String):
+    bestScore = 0
+    bestString = ""
+    char = ""
+    tmpString, tmpScore, char = findXOR(String)
+    if tmpScore > bestScore:
+        bestScore = tmpScore
+        bestString = tmpString
+    return char
+
+def break_reapeat_XOR():
+    #test
+    #hamming_distance("this is a test","wokka wokka!!!")
+    file = open("ch6.txt", "r").read()
+    text_after_decode_b64 = base64.b64decode(file)
+    text_after_decode_byte = text_after_decode_b64.decode()
+    min_distance = []
+    min_distance.insert(0, 99999999)
+    for keysize in range(2, 40):
+        sum = 0
+        firstBlock = text_after_decode_byte[0:keysize]
+        secondBlock = text_after_decode_byte[keysize:keysize*2]
+        sum = hamming_distance(firstBlock, secondBlock)
+        sum = (sum / keysize)
+        for x in range(0,len(min_distance)):
+            if(min_distance[x] > sum):
+                print(str(keysize) + " " + str(sum))
+                min_distance.insert(x, sum)
+                break
+
+    print(min_distance)
+    #blocks =  []
+    #newBlocks = {}
+    #for i in range(0, int(len(text_after_decode_byte)/min_distance), min_distance):
+    #    blocks.append(text_after_decode_byte[i:i+min_distance])
+    #for str in blocks:
+    #    for x in range(0, min_distance):
+    #        if not (x in newBlocks):
+    #            newBlocks[x] = str[x]
+    #        else:
+    #            newBlocks[x] += str[x]
+    #
+    #for i in range(0,min_distance):
+    #    c = newBlocks[i]
+    #    print(c)
+    #    c = singleCharXOR1(c)
+    #    print(c)
+
+
 if __name__ == '__main__':
     #hexToBase()
     #fixedXOR("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965")
     #findXOR("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
     #singleCharXOR()
     #repeating_keyXOR()
-    repeating_keyXOR_newLine()
+    #repeating_keyXOR_newLine()
+    break_reapeat_XOR()
