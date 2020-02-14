@@ -38,11 +38,11 @@ def findXOR(string1):
     highestProbSentence = ""
     theChar = ""
     table = makeFreqTable()
-    regex = re.compile(r'[`@_!#$%^&*+,()<>?/\|}{~:]')
+    regex = re.compile(r'[`@_!#$%^&*+,()<>?/\|}{~]')
     regex2 = re.compile(r'[^A-Fa-f]')
 
     #Check each letter
-    for c in ascii_letters + digits:
+    for c in ascii_letters + digits + " " + ":":
         xor = bytes(a ^ ord(c) for a in text)
         orgtheString = codecs.decode(xor)
         theString = orgtheString.lower()#.rstrp()
@@ -95,21 +95,21 @@ def repeating_keyXOR():
         string += hexa
     print(string)
 #
-def repeating_keyXOR_newLine():
-    plaintext = """Burning 'em, if you ain't quick and nimble
-I go crazy when I hear a cymbal"""
-    key = b'ICE'
+def repeating_keyXOR_newLine(plaintext, key):
+    keylength = len(key)
     byteText = plaintext.encode()
+    key = key.encode()
     counter = 0
     string = ""
     for b in byteText:
-        xor = b ^ key[counter%3]
+        xor = b ^ key[counter%keylength]
         hexa = str(hex(xor))[2:]
         if len(hexa) < 2:
             hexa = '0' + hexa
         string += hexa
         counter += 1
-    print(string)
+    #print(string)
+    return string
 
 #6
 def hamming_distance(String1, String2):
@@ -137,40 +137,62 @@ def singleCharXOR1(String):
 def break_reapeat_XOR():
     #test
     #hamming_distance("this is a test","wokka wokka!!!")
-    file = open("ch6.txt", "r").read()
+    file = open("ch6.txt", "rb").read()
     text_after_decode_b64 = base64.b64decode(file)
-    text_after_decode_byte = text_after_decode_b64.decode()
-    min_distance = []
-    min_distance.insert(0, 99999999)
-    for keysize in range(2, 40):
-        sum = 0
-        firstBlock = text_after_decode_byte[0:keysize]
-        secondBlock = text_after_decode_byte[keysize:keysize*2]
-        sum = hamming_distance(firstBlock, secondBlock)
-        sum = (sum / keysize)
-        for x in range(0,len(min_distance)):
-            if(min_distance[x] > sum):
-                print(str(keysize) + " " + str(sum))
-                min_distance.insert(x, sum)
+    text = ""
+    for f in text_after_decode_b64:
+        text += chr(f)
+    bestNumbers = []
+    bestNumbers.append((0,9999999))
+    bestNumbers.append((0,9999999))
+    bestNumbers.append((0,9999999))
+    for i in range(2,41):
+        firstblock = text[0:i]
+        secondBlock = text[i: i*2]
+        thirdBlock = text[i*2: i*3]
+        fourthBlock = text[i*3: i*4]
+        dist = hamming_distance(firstblock, secondBlock)
+        dist += hamming_distance(secondBlock, thirdBlock)
+        dist += hamming_distance(thirdBlock, fourthBlock)
+        dist = dist / (3*i)
+        for j in range(len(bestNumbers)):
+            tmp = bestNumbers[j]
+            if tmp[1] > dist:
+                bestNumbers[j] = (i, dist)
                 break
+    #All 3 array blocks
+    splitArray = []
+    for number in bestNumbers:
+        #All blocks for 1 array
+        wholeArr = []
+        keynumber = number[0]
+        for x in range(0, len(text), keynumber):
+            block = text[x:x+keynumber]
+            wholeArr.append(block)
+        splitArray.append(wholeArr)
 
-    print(min_distance)
-    #blocks =  []
-    #newBlocks = {}
-    #for i in range(0, int(len(text_after_decode_byte)/min_distance), min_distance):
-    #    blocks.append(text_after_decode_byte[i:i+min_distance])
-    #for str in blocks:
-    #    for x in range(0, min_distance):
-    #        if not (x in newBlocks):
-    #            newBlocks[x] = str[x]
-    #        else:
-    #            newBlocks[x] += str[x]
-    #
-    #for i in range(0,min_distance):
-    #    c = newBlocks[i]
-    #    print(c)
-    #    c = singleCharXOR1(c)
-    #    print(c)
+    for arrblock in splitArray:
+        collect = {}
+        key = ""
+        finalsentence = b""
+        for block in arrblock:
+            for i in range(0, len(block)):
+                if i in collect:
+                    collect[i] += block[i]
+                else:
+                    collect[i] = block[i]
+        for i in range(0, len(collect)):
+            hex = collect[i].encode()
+            hex = hex.hex()
+            c = singleCharXOR1(hex)
+            key += c
+        print(key)
+        str = repeating_keyXOR_newLine(text, key)
+        for x in range(0, len(str), 2):
+            hex = str[x:x+2]
+            c = b''.fromhex(hex)
+            finalsentence += c
+        print(finalsentence.decode())
 
 
 if __name__ == '__main__':
@@ -179,5 +201,6 @@ if __name__ == '__main__':
     #findXOR("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
     #singleCharXOR()
     #repeating_keyXOR()
-    #repeating_keyXOR_newLine()
+    #repeating_keyXOR_newLine("""Burning 'em, if you ain't quick and nimble
+#I go crazy when I hear a cymbal""", "ICE")
     break_reapeat_XOR()
