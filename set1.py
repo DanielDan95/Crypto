@@ -2,6 +2,7 @@ import codecs
 import base64
 from string import ascii_letters, digits
 import re
+from Crypto.Cipher import AES
 
 #1
 def hexToBase():
@@ -194,6 +195,9 @@ def break_reapeat_XOR():
             finalsentence += c
         print(finalsentence.decode())
 
+def doAes(key, file):
+    file = open(file, "r").read()
+    cipher = AES.new(key, AES.MODE_ECB)
 
 if __name__ == '__main__':
     #hexToBase()
@@ -203,4 +207,5 @@ if __name__ == '__main__':
     #repeating_keyXOR()
     #repeating_keyXOR_newLine("""Burning 'em, if you ain't quick and nimble
 #I go crazy when I hear a cymbal""", "ICE")
-    break_reapeat_XOR()
+    #break_reapeat_XOR()
+    doAes("YELLOW SUBMARINE", "ch7")
