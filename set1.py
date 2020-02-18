@@ -198,6 +198,16 @@ def break_reapeat_XOR():
 def doAes(key, file):
     file = open(file, "r").read()
     cipher = AES.new(key, AES.MODE_ECB)
+    enc = base64.b64decode(file)
+    m = cipher.decrypt(enc)
+    print(m.decode())
+
+def seeIfAes(file):
+    with open('ch8.txt') as fin:
+        for line in fin:
+            chunks = [line[i*16:(i+1)*16] for i in range(int(len(line)/16))]
+            duplicates = len(chunks) - len(set(chunks))
+            print(duplicates)
 
 if __name__ == '__main__':
     #hexToBase()
@@ -208,4 +218,5 @@ if __name__ == '__main__':
     #repeating_keyXOR_newLine("""Burning 'em, if you ain't quick and nimble
 #I go crazy when I hear a cymbal""", "ICE")
     #break_reapeat_XOR()
-    doAes("YELLOW SUBMARINE", "ch7")
+    #doAes("YELLOW SUBMARINE", "ch7.txt")
+    seeIfAes("ch8.txt")
