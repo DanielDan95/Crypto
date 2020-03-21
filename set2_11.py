@@ -328,6 +328,8 @@ def pkcs_val(paddedCheck):
         if paddedCheck[x-1] != ints:
              raise Exception("WRONG PADDING")
     print("correct pad")
+    paddedCheck = paddedCheck[:-ints]
+    print(paddedCheck)
 
 if __name__ == '__main__':
     #pcksPad("YELLOW SUBMARINE".encode(), 20)
