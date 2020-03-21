@@ -322,6 +322,13 @@ def ecb_cutPaste():
     print(parsing_routine(decryptedUser))
     hacking()
 
+def pkcs_val(paddedCheck):
+    ints = paddedCheck[-1]
+    for x in range(len(paddedCheck), len(paddedCheck) - ints, -1):
+        if paddedCheck[x-1] != ints:
+             raise Exception("WRONG PADDING")
+    print("correct pad")
+
 if __name__ == '__main__':
     #pcksPad("YELLOW SUBMARINE".encode(), 20)
     #do_aes_cbc("ch10.txt", "YELLOW SUBMARINE")
@@ -329,4 +336,6 @@ if __name__ == '__main__':
     #encryption_oracle("ppkk" * 90)
     #ecb_encryption_oracle("ppkk" * 90)
     #decrypt_ecb_noKey()
-    ecb_cutPaste()
+    #ecb_cutPaste()
+    pkcs_val(b'ICE ICE BABY\x04\x04\x04\x04')
+    pkcs_val(b'ICE ICE BABY\x01\x02\x03\x04')
